@@ -11,17 +11,8 @@ import(
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"./models"
 )
-
-type User struct{
-	ID primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-	Name string `json:"name" bson:"name"`
-	Last_name string `json:"last_name" bson:"last_name"`
-    Nick_name string `json:"nick_name" bson:"nick_name"`
-    Last_lunch primitive.DateTime `json:"last_lunch" bson:"last_lunch"`
-    Benefits int `json:"benefits" bson:"benefits"`
-}
 
 
 func home(res http.ResponseWriter, req *http.Request) {
@@ -43,14 +34,14 @@ func connection() *mongo.Database{
 func getUsers(res http.ResponseWriter, req *http.Request) {
 	collection := connection().Collection("users")
 	cur, err := collection.Find(context.Background(), bson.D{{}})
-	users := []User{}
+	users := []models.User{}
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer cur.Close(context.Background())
 	
 	for cur.Next(context.Background()) {
-			var user User
+			var user models.User
             err := cur.Decode(&user)
             if err != nil {
                 log.Fatal(err)
